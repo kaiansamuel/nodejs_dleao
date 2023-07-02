@@ -1,34 +1,19 @@
 const http = require('http')
-
+const { randomUUID } = require('crypto')
+let users = []
 const server = http.createServer((request, response) => {
-  if(request.url === '/minha-primeira-rota'){
-    const result = {
-      message: 'Minha primeira rota'
+ const METHOD = request.method
+ if(METHOD === 'POST'){
+  request.on('data', (data) => {
+    const body = JSON.parse(data)
+    const user = {
+      ...body,
+      id: randomUUID(),
     }
-    response.statusCode = 200
-    response.setHeader('Content-type', 'application/json')
-    
-    return response.end(JSON.stringify(result))
-  }
-  if(request.url === '/minha-segunda-rota'){
-    const result = {
-      message: 'Minha segunda rota'
+    users.push(user)
+    return response.end(JSON.stringify(user))
+    })
     }
-    response.statusCode = 200
-    response.setHeader('Content-type', 'application/json')
-    
-    return response.end(JSON.stringify(result))
-  }
-
-  const result = {
-    message: 'Qualquer outra rota!'
-  }
-  response.statusCode = 200
-  response.setHeader('Content-type', 'application/json')
-  response.statusMessage = 'Usuário faltando informação'
-
-  response.write(JSON.stringify(result))
-  response.end()
   })
 
   server.listen(3030, () => console.log('Servidor rodando!'))
